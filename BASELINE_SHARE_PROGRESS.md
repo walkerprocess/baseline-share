@@ -67,6 +67,27 @@ Recommended Stage 1 targets:
 - Render free web service, likely `https://baseline-share.onrender.com`
 - Railway public service, likely `https://baseline-share.up.railway.app`
 
+Stage 1 deployment completed:
+
+```text
+https://baseline-share.onrender.com
+```
+
+Verified public endpoints:
+
+```text
+https://baseline-share.onrender.com/healthz
+https://baseline-share.onrender.com/api/bootstrap
+```
+
+External verification results:
+
+- `/healthz` returned `200` with `{"ok": true, "service": "baseline-share"}`
+- Home page returned `200`
+- Home page contains `<title>Baseline Share</title>`
+- `/api/bootstrap` returned 6 seeded projects
+- Public stats started clean: 6 projects, 0 downloads, 0 uploads, 0 favorites
+
 Important domain clarification:
 
 - User suggested `baseline.project.share.com`.
@@ -79,10 +100,8 @@ Current blocker:
 
 - GitHub account is connected as `walkerprocess`.
 - Repo exists and code is pushed.
-- Next blocker is hosting auth.
-- User needs to log in to Render or Railway and connect `walkerprocess/baseline-share`.
-
-Recommended next manual step: Render dashboard -> New -> Blueprint -> connect GitHub repo `walkerprocess/baseline-share` -> apply `render.yaml`.
+- Render Blueprint is connected and deployed.
+- Current public Stage 1 URL is live at `https://baseline-share.onrender.com`.
 
 ## Important Files
 
