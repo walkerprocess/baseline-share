@@ -49,10 +49,17 @@ Prepared deployment files:
 Local Git status:
 
 - Git repo initialized in `C:\Users\blank\OneDrive\Desktop\Codex\baseline-share`
-- Initial commit created:
+- GitHub repo created and pushed:
+
+```text
+https://github.com/walkerprocess/baseline-share
+```
+
+- Commits pushed to `main`:
 
 ```text
 d3c8cb1 Initial Baseline Share backend prototype
+357bdc5 Add deployment configuration
 ```
 
 Recommended Stage 1 targets:
@@ -71,15 +78,11 @@ Important domain clarification:
 Current blocker:
 
 - GitHub account is connected as `walkerprocess`.
-- The available GitHub connector can inspect and edit existing repos, but does not expose a create-new-repository tool.
-- Browser automation hit a trust/native-pipe issue when opening GitHub.
-- User needs to manually create a GitHub repo named `baseline-share`, then Codex can add the remote and push:
+- Repo exists and code is pushed.
+- Next blocker is hosting auth.
+- User needs to log in to Render or Railway and connect `walkerprocess/baseline-share`.
 
-```powershell
-git remote add origin https://github.com/walkerprocess/baseline-share.git
-git branch -M main
-git push -u origin main
-```
+Recommended next manual step: Render dashboard -> New -> Blueprint -> connect GitHub repo `walkerprocess/baseline-share` -> apply `render.yaml`.
 
 ## Important Files
 
