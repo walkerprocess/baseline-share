@@ -87,6 +87,8 @@ External verification results:
 - Home page contains `<title>Baseline Share</title>`
 - `/api/bootstrap` returned 6 seeded projects
 - Public stats started clean: 6 projects, 0 downloads, 0 uploads, 0 favorites
+- After adding real project zips, Render public `/api/bootstrap` returned 8 projects and 3 archive-backed projects.
+- Public download test succeeded for `codex-jobfit-resume-intelligence`: ad gate required, download recorded, zip response was 11,935 bytes with `PK` zip header.
 
 Important domain clarification:
 
