@@ -228,6 +228,26 @@ For real web deployment, ask user to authorize/log in to:
 - Domain/DNS provider only if using a custom domain.
 - Ad network account later, because monetized ads require the user's own approved account.
 
+Domain account status:
+
+- User has created a Porkbun account.
+- Recommended registrar remains Porkbun for first domain purchase because it is simple and cost-effective.
+- When ready, use Porkbun to search for and buy the final domain, ideally `baselineshare.com` or `baseline-share.com`.
+- After purchase, connect DNS to Render using Render's custom domain instructions.
+
+## Ongoing Portfolio Project Rule
+
+Every time Codex creates a new project for the user's own portfolio:
+
+1. Make sure the project has a useful `README.md`.
+2. Make sure secrets, local caches, dependencies, API keys, and private files are excluded.
+3. Upload/push the project to the user's GitHub.
+4. Create a clean `.zip` archive for the project.
+5. Add/upload that zip to Baseline Share so users can download it.
+6. Add a clear Baseline Share project title, category, stack tags, and description written for resume/portfolio value.
+7. Verify the Baseline Share download returns a valid zip file.
+8. Update this progress file if the project becomes part of the public Baseline Share catalog.
+
 ## Next Best Steps
 
 1. Add real project archive upload support.
