@@ -128,6 +128,27 @@ button {
   font-weight: 800;
 }
 
+.policy-nav {
+  display: grid;
+  gap: 4px;
+  padding: 10px 2px 0;
+  border-top: 1px solid var(--line);
+}
+
+.policy-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+
+.policy-nav a:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
 .credit-panel {
   margin-top: auto;
   padding: 16px;
@@ -666,6 +687,17 @@ svg {
     grid-template-columns: repeat(4, 1fr);
   }
 
+  .policy-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-top: 12px;
+  }
+
+  .policy-nav a {
+    text-align: center;
+    font-size: 0.78rem;
+    padding-inline: 4px;
+  }
+
   .side-nav a {
     justify-content: center;
   }
@@ -699,6 +731,10 @@ svg {
 
   .side-nav {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .policy-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .stats-row,
