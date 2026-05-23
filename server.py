@@ -11,9 +11,12 @@ import time
 
 ROOT = Path(__file__).resolve().parent
 DB_PATH = Path(os.environ.get("DB_PATH", ROOT / "baseline_share.db"))
+ARCHIVE_DIR = ROOT / "assets" / "project-zips"
 SESSION_SECONDS = 60 * 60 * 24 * 30
 AD_SECONDS = 5
 APP_ENV = os.environ.get("APP_ENV", "development")
+ADS_TXT_CONTENT = os.environ.get("ADS_TXT_CONTENT", "").strip()
+MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 
 
 SEED_PROJECTS = [
@@ -21,9 +24,13 @@ SEED_PROJECTS = [
     ("fastapi-starter", "FastAPI Auth Starter", "Backend", ["Python", "FastAPI", "JWT"], 942, "#0f766e", "fastapi-auth-starter.zip", "REST API starter with auth routes, user models, request validation, and environment setup notes."),
     ("analytics-pipeline", "Analytics Pipeline Kit", "Analytics", ["Python", "CSV", "Reports"], 1138, "#7c3aed", "analytics-pipeline-kit.zip", "A reproducible analysis baseline for cleaning data, calculating KPIs, and exporting Markdown reports."),
     ("ai-chatbot-rag", "RAG Chatbot Baseline", "AI", ["Python", "RAG", "Vectors"], 756, "#db2777", "rag-chatbot-baseline.zip", "Document Q&A starter with ingestion steps, retrieval flow, prompt templates, and evaluation checklist."),
-    ("secure-chatroom", "Encrypted Chatroom", "Security", ["Node", "WebSocket", "Crypto"], 618, "#ea580c", "encrypted-chatroom.zip", "Browser-side encryption starter with WebSocket relay, hashed rooms, and security notes."),
     ("product-roadmap", "Product Roadmap Workspace", "Product", ["HTML", "LocalStorage", "UX"], 481, "#0891b2", "product-roadmap-workspace.zip", "A product planning baseline with user stories, roadmap swimlanes, prioritization scoring, and notes."),
+    ("codex-encrypted-chatroom", "Encrypted Chatroom Portfolio Baseline", "Security", ["Node", "WebSocket", "Web Crypto", "HTTPS"], 0, "#ea580c", "encrypted-chatroom.zip", "Resume-ready secure chatroom project with encrypted browser messages, WebSocket relay, private rooms, and security notes."),
+    ("codex-logistics-news-analytics", "Live Logistics News Analytics", "Analytics", ["Python", "RSS News", "SQL", "Reports"], 0, "#0f766e", "live-logistics-news-analytics.zip", "Analytics portfolio baseline that turns live logistics news and shipment sample data into KPI and risk reports."),
+    ("codex-jobfit-resume-intelligence", "JobFit Resume Intelligence", "Career", ["Python", "Jobs API", "News RSS", "Scoring"], 0, "#7c3aed", "jobfit-resume-intelligence.zip", "Career-tech baseline for students: score live jobs against a resume profile and generate a portfolio-ready job-fit report."),
 ]
+
+DEPRECATED_PROJECT_IDS = ["secure-chatroom"]
 
 
 def now() -> int:
@@ -95,6 +102,8 @@ def init_db() -> None:
             );
             """
         )
+        for project_id in DEPRECATED_PROJECT_IDS:
+            conn.execute("DELETE FROM projects WHERE id = ?", (project_id,))
         for project in SEED_PROJECTS:
             conn.execute(
                 """
@@ -120,6 +129,7 @@ def slugify(value: str) -> str:
 
 
 def project_to_dict(row: sqlite3.Row) -> dict:
+    archive_path = ARCHIVE_DIR / row["file_name"]
     return {
         "id": row["id"],
         "title": row["title"],
@@ -131,6 +141,7 @@ def project_to_dict(row: sqlite3.Row) -> dict:
         "description": row["description"],
         "uploadedBy": row["uploaded_by"],
         "createdAt": row["created_at"],
+        "hasArchive": archive_path.exists(),
     }
 
 
@@ -160,14 +171,31 @@ class BaselineShareHandler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/healthz":
             return self.json_response({"ok": True, "service": "baseline-share"})
+        if path == "/ads.txt":
+            return self.ads_txt()
         if path == "/api/bootstrap":
             return self.bootstrap()
+        if path.startswith("/api/projects/") and path.endswith("/download"):
+            project_id = path.split("/")[3]
+            return self.project_download(project_id)
         if path.startswith("/api/projects/") and path.endswith("/manifest"):
             project_id = path.split("/")[3]
             return self.project_manifest(project_id)
         if path.startswith("/api/"):
             return self.json_response({"error": "Not found"}, 404)
         return super().do_GET()
+
+    def ads_txt(self) -> None:
+        if not ADS_TXT_CONTENT:
+            body = "# ads.txt is not configured yet. Add ADS_TXT_CONTENT after an ad network approves this site.\n".encode("utf-8")
+            self.send_response(200)
+        else:
+            body = f"{ADS_TXT_CONTENT}\n".encode("utf-8")
+            self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
@@ -190,6 +218,48 @@ class BaselineShareHandler(SimpleHTTPRequestHandler):
             return {}
         raw = self.rfile.read(length).decode("utf-8")
         return json.loads(raw or "{}")
+
+    def read_multipart(self) -> tuple[dict, dict | None]:
+        content_type = self.headers.get("Content-Type", "")
+        boundary_marker = "boundary="
+        if boundary_marker not in content_type:
+            raise ValueError("Multipart boundary missing")
+        length = int(self.headers.get("Content-Length", "0") or "0")
+        if length <= 0:
+            raise ValueError("Upload body missing")
+        if length > MAX_UPLOAD_BYTES:
+            raise ValueError("Upload is too large. Please keep zip files under 25MB.")
+
+        boundary = content_type.split(boundary_marker, 1)[1].strip().strip('"')
+        body = self.rfile.read(length)
+        fields: dict[str, str] = {}
+        upload: dict | None = None
+
+        for raw_part in body.split(("--" + boundary).encode("utf-8")):
+            part = raw_part.strip(b"\r\n")
+            if not part or part == b"--":
+                continue
+            if b"\r\n\r\n" not in part:
+                continue
+            header_blob, content = part.split(b"\r\n\r\n", 1)
+            headers = header_blob.decode("utf-8", "replace").split("\r\n")
+            disposition = next((header for header in headers if header.lower().startswith("content-disposition:")), "")
+            params = {}
+            for item in disposition.split(";"):
+                if "=" in item:
+                    key, value = item.strip().split("=", 1)
+                    params[key.lower()] = value.strip().strip('"')
+            name = params.get("name")
+            filename = params.get("filename")
+            content = content.rstrip(b"\r\n")
+            if not name:
+                continue
+            if filename:
+                upload = {"field": name, "filename": filename, "content": content}
+            else:
+                fields[name] = content.decode("utf-8", "replace").strip()
+
+        return fields, upload
 
     def json_response(self, payload: dict, status: int = 200, extra_headers: dict | None = None) -> None:
         body = json.dumps(payload).encode("utf-8")
@@ -314,23 +384,38 @@ class BaselineShareHandler(SimpleHTTPRequestHandler):
             user = self.require_user(conn)
             if not user:
                 return
-            data = self.read_json()
+            content_type = self.headers.get("Content-Type", "")
+            upload = None
+            if content_type.startswith("multipart/form-data"):
+                try:
+                    data, upload = self.read_multipart()
+                except ValueError as error:
+                    return self.json_response({"error": str(error)}, 400)
+            else:
+                data = self.read_json()
             title = str(data.get("title", "")).strip()
             category = str(data.get("category", "")).strip()
             stack = [item.strip() for item in str(data.get("stack", "")).split(",") if item.strip()][:4]
             description = str(data.get("description", "")).strip()
             if not title or not category or not stack or not description:
                 return self.json_response({"error": "Title, category, stack, and description are required"}, 400)
+            if not upload or upload.get("field") != "archive":
+                return self.json_response({"error": "A project zip file is required"}, 400)
+            if not upload["filename"].lower().endswith(".zip") or not upload["content"].startswith(b"PK"):
+                return self.json_response({"error": "Upload must be a valid zip file"}, 400)
 
             base_id = slugify(title)
             project_id = f"{base_id}-{secrets.token_hex(3)}"
+            file_name = f"{project_id}.zip"
+            ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+            (ARCHIVE_DIR / file_name).write_bytes(upload["content"])
             conn.execute(
                 """
                 INSERT INTO projects
                 (id, title, category, stack_json, color, file_name, description, uploaded_by, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (project_id, title, category, json.dumps(stack), "#334155", f"{base_id}.zip", description, user["id"], now()),
+                (project_id, title, category, json.dumps(stack), "#334155", file_name, description, user["id"], now()),
             )
             conn.execute("UPDATE users SET credits = credits + 5 WHERE id = ?", (user["id"],))
         self.bootstrap()
@@ -431,6 +516,27 @@ class BaselineShareHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def project_download(self, project_id: str) -> None:
+        with db() as conn:
+            project = conn.execute("SELECT * FROM projects WHERE id = ?", (project_id,)).fetchone()
+            if not project:
+                return self.json_response({"error": "Project not found"}, 404)
+            data = project_to_dict(project)
+
+        archive_path = (ARCHIVE_DIR / data["file"]).resolve()
+        archive_root = ARCHIVE_DIR.resolve()
+        if str(archive_path).startswith(str(archive_root)) and archive_path.exists():
+            body = archive_path.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/zip")
+            self.send_header("Content-Disposition", f"attachment; filename=\"{data['file']}\"")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        self.project_manifest(project_id)
 
 
 if __name__ == "__main__":

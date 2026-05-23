@@ -181,6 +181,9 @@ Verified by direct HTTP/API session:
 - Upload grants 5 credits.
 - Credit download consumes 1 credit.
 - Download count and credits update correctly after commit timing fix.
+- Curated Codex projects now download as real `.zip` files.
+- User uploads now require an actual `.zip` file before credits are granted.
+- Multipart upload was verified with a student-user test: login, zip upload, 5 credits, zip re-download, and `PK` zip header check.
 
 Verified in browser:
 
@@ -191,11 +194,12 @@ Verified in browser:
 
 ## Known Notes
 
-- The local DB was reset after tests, so current visible state is clean default seed data.
+- The local DB may contain smoke-test users/projects from upload verification. The DB is ignored by git and not pushed.
 - Browser automation text entry had an environment-specific clipboard issue, so backend logic was verified through direct API requests.
 - Current auth is email/name demo auth. It is not production-grade.
-- Current downloads are manifest text files, not actual zipped project archives.
-- Uploaded files are metadata only right now. Real file upload/storage is the next backend milestone.
+- Curated projects and user-uploaded projects can download actual zip files.
+- Seed projects without a real archive still fall back to a manifest download.
+- Uploaded files are stored on local/Render app filesystem for Stage 1. This can reset on redeploy, so object storage is still needed before serious production traffic.
 
 ## Production Gaps
 
@@ -241,3 +245,10 @@ After backend and real web deployment, start posting the projects already made i
 - `projects\03-jobfit-resume-intelligence`
 
 Eventually these should become real downloadable baseline projects on Baseline Share.
+
+Current status:
+
+- `01-encrypted-chatroom` is packaged as `assets/project-zips/encrypted-chatroom.zip`
+- `02` is packaged as `assets/project-zips/live-logistics-news-analytics.zip`
+- `03-jobfit-resume-intelligence` is packaged as `assets/project-zips/jobfit-resume-intelligence.zip`
+- These are seeded in the app as resume/portfolio-ready downloadable projects.

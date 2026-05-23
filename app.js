@@ -1,4 +1,4 @@
-const categories = ["All", "Frontend", "Backend", "Analytics", "AI", "Security", "Product"];
+const categories = ["All", "Career", "Security", "Analytics", "Frontend", "Backend", "AI", "Product"];
 const themeKey = "baseline-share-theme";
 
 const defaultState = {
@@ -153,16 +153,7 @@ function bindEvents() {
 
     const data = new FormData(el.uploadForm);
     try {
-      const payload = {
-        title: data.get("title").trim(),
-        category: data.get("category"),
-        stack: data.get("stack").trim(),
-        description: data.get("description").trim()
-      };
-      const nextState = await api("/api/projects", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
+      const nextState = await uploadProject(data);
       applyBootstrap(nextState);
       el.uploadForm.reset();
       showView("library");
@@ -172,6 +163,27 @@ function bindEvents() {
     }
   });
 
+  async function uploadProject(formData) {
+    const response = await fetch("/api/projects", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData
+      });
+
+    if (!response.ok) {
+      let message = "Upload failed";
+      try {
+        const error = await response.json();
+        message = error.error || message;
+      } catch {
+        message = response.statusText || message;
+      }
+      throw new Error(message);
+    }
+
+    return response.json();
+  }
+
   el.finishAdButton.addEventListener("click", async () => {
     if (!pendingAdToken || !pendingDownloadProject) return;
     try {
@@ -180,7 +192,7 @@ function bindEvents() {
         body: JSON.stringify({ ad_token: pendingAdToken })
       });
       applyBootstrap(nextState);
-      await downloadManifest(pendingDownloadProject);
+      await downloadProject(pendingDownloadProject);
       toast(`${pendingDownloadProject.title} unlocked.`);
       pendingAdToken = null;
       pendingDownloadProject = null;
@@ -282,9 +294,10 @@ function renderProjects() {
           <span>${escapeHtml(project.category)}</span>
           ${project.stack.map(item => `<span>${escapeHtml(item)}</span>`).join("")}
           <span>${project.downloads} downloads</span>
+          ${project.hasArchive ? "<span>Real ZIP</span>" : "<span>Manifest</span>"}
         </div>
         <div class="card-actions">
-          <button class="primary-button" data-download="${project.id}"><i data-lucide="download"></i> Download</button>
+          <button class="primary-button" data-download="${project.id}"><i data-lucide="download"></i> ${project.hasArchive ? "Download ZIP" : "Download"}</button>
           <button class="outline-button favorite-button ${favorite ? "active" : ""}" data-favorite="${project.id}" title="Favorite" aria-label="Favorite ${escapeHtml(project.title)}"><i data-lucide="star"></i></button>
         </div>
       </article>
@@ -392,7 +405,7 @@ async function startDownload(projectId) {
     }
 
     applyBootstrap(response);
-    await downloadManifest(project);
+    await downloadProject(project);
     toast(`${project.title} unlocked.`);
   } catch (error) {
     toast(error.message);
@@ -403,7 +416,7 @@ function openAd(project, seconds = 5) {
   let count = seconds;
   clearInterval(countdownTimer);
   el.adTitle.textContent = `Unlock ${project.title}`;
-  el.adCopy.textContent = "This sponsor view funds creators while keeping baseline projects free to access.";
+  el.adCopy.textContent = "This sponsor slot is ready for a real ad network. For now, the demo timer protects the download flow without collecting revenue.";
   el.finishAdButton.disabled = true;
   el.finishAdButton.innerHTML = `Continue in <span id="adCountdown">${count}</span>s`;
   el.adDialog.showModal();
@@ -420,15 +433,15 @@ function openAd(project, seconds = 5) {
   }, 1000);
 }
 
-async function downloadManifest(project) {
-  const response = await fetch(`/api/projects/${encodeURIComponent(project.id)}/manifest`, {
+async function downloadProject(project) {
+  const response = await fetch(`/api/projects/${encodeURIComponent(project.id)}/download`, {
     credentials: "same-origin"
   });
   if (!response.ok) throw new Error("Download file was not available.");
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const fileName = project.file.replace(".zip", "-manifest.txt");
+  const fileName = project.hasArchive ? project.file : project.file.replace(".zip", "-manifest.txt");
   link.href = url;
   link.download = fileName;
   link.click();

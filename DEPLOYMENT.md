@@ -91,3 +91,21 @@ SQLite is fine for the local prototype, but before public launch we should move 
 - Signed download URLs so files cannot be scraped
 - Terms of service and upload license agreement
 - Ad network integration after the product has acceptable content and traffic
+
+## Ads And Monetization
+
+Current status:
+
+- The download flow has a sponsor-view gate.
+- Real ad revenue is not active yet because ad networks require account approval and publisher IDs.
+- `/ads.txt` is implemented and can be configured later with the `ADS_TXT_CONTENT` environment variable.
+
+Recommended path:
+
+1. Keep the demo sponsor gate while testing the product.
+2. Add real content pages and project detail pages so the site has enough original content for review.
+3. Apply for Google AdSense after the site has a real domain and useful content.
+4. If the audience becomes developer/student focused, also apply for Carbon Ads or BuySellAds sponsorships.
+5. After approval, set `ADS_TXT_CONTENT` in Render using the exact line from the ad network.
+
+Do not add fake publisher IDs. Use only approved ad network code from the user's account.

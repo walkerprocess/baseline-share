@@ -25,6 +25,9 @@ http://127.0.0.1:4178
 - Ad-gated downloads when the user has no credits
 - Uploading one baseline grants five ad-free download credits
 - Ad-free downloads consume one credit
+- Real zip downloads for curated Codex portfolio projects
+- User uploads require an actual `.zip` file, not only project metadata
+- `/ads.txt` support through `ADS_TXT_CONTENT` once an ad network approves the site
 
 ## Production Notes
 

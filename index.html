@@ -115,7 +115,7 @@ status: ready</pre>
               <h2 id="uploadTitle">Upload A Baseline</h2>
             </div>
           </div>
-          <form class="upload-form" id="uploadForm">
+          <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
             <label>
               Project title
               <input name="title" required placeholder="Inventory Tracker Starter" />
@@ -137,6 +137,10 @@ status: ready</pre>
             <label class="full">
               Short description
               <textarea name="description" required rows="4" placeholder="What problem does this baseline help someone solve?"></textarea>
+            </label>
+            <label class="full">
+              Project zip file
+              <input name="archive" type="file" accept=".zip,application/zip" required />
             </label>
             <button class="primary-button" type="submit"><i data-lucide="upload"></i> Publish baseline</button>
           </form>
