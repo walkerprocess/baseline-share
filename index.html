@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Baseline Share</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary">
+        <a class="brand" href="#library" aria-label="Baseline Share home">
+          <span class="brand-mark">BS</span>
+          <span>
+            <strong>Baseline Share</strong>
+            <small>Project starter library</small>
+          </span>
+        </a>
+
+        <nav class="side-nav">
+          <a class="active" href="#library" data-view-link="library"><i data-lucide="boxes"></i> Library</a>
+          <a href="#downloads" data-view-link="downloads"><i data-lucide="download-cloud"></i> Downloads</a>
+          <a href="#uploads" data-view-link="uploads"><i data-lucide="upload-cloud"></i> Upload</a>
+          <a href="#account" data-view-link="account"><i data-lucide="user-round"></i> Account</a>
+        </nav>
+
+        <section class="credit-panel">
+          <span>Ad-free credits</span>
+          <strong id="creditCount">0</strong>
+          <p>Upload one useful baseline project to unlock five ad-free downloads.</p>
+        </section>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div class="search-wrap">
+            <i data-lucide="search"></i>
+            <input id="searchInput" type="search" placeholder="Search templates, stacks, use cases" />
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="themeButton" aria-label="Toggle theme" title="Toggle theme"><i data-lucide="moon"></i></button>
+            <button class="outline-button" id="loginButton"><i data-lucide="log-in"></i><span>Log in</span></button>
+          </div>
+        </header>
+
+        <section class="hero-band">
+          <div>
+            <p class="eyebrow">Build faster, share smarter</p>
+            <h1>Baseline Share</h1>
+            <p>Download practical starter projects after a short sponsor view, or contribute your own baseline and earn ad-free downloads.</p>
+          </div>
+          <div class="hero-preview" aria-label="Project preview collage">
+            <div class="preview-window">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <pre>npm create baseline
+templates: auth, dashboard, api
+status: ready</pre>
+            </div>
+            <div class="preview-stack">
+              <span>React</span>
+              <span>Python</span>
+              <span>SQL</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats-row" aria-label="Marketplace stats">
+          <article>
+            <span>Baselines</span>
+            <strong id="statProjects">0</strong>
+          </article>
+          <article>
+            <span>Downloads</span>
+            <strong id="statDownloads">0</strong>
+          </article>
+          <article>
+            <span>Uploads</span>
+            <strong id="statUploads">0</strong>
+          </article>
+          <article>
+            <span>Favorites</span>
+            <strong id="statFavorites">0</strong>
+          </article>
+        </section>
+
+        <section class="view active" id="libraryView" aria-labelledby="libraryTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Explore</p>
+              <h2 id="libraryTitle">Project Library</h2>
+            </div>
+            <div class="filters" id="filterBar" aria-label="Filters"></div>
+          </div>
+          <div class="project-grid" id="projectGrid"></div>
+        </section>
+
+        <section class="view" id="downloadsView" aria-labelledby="downloadsTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2 id="downloadsTitle">Downloaded Projects</h2>
+            </div>
+          </div>
+          <div class="history-list" id="downloadHistory"></div>
+        </section>
+
+        <section class="view" id="uploadsView" aria-labelledby="uploadTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Contribute</p>
+              <h2 id="uploadTitle">Upload A Baseline</h2>
+            </div>
+          </div>
+          <form class="upload-form" id="uploadForm">
+            <label>
+              Project title
+              <input name="title" required placeholder="Inventory Tracker Starter" />
+            </label>
+            <label>
+              Stack
+              <input name="stack" required placeholder="React, Supabase, Tailwind" />
+            </label>
+            <label>
+              Category
+              <select name="category" required>
+                <option>Frontend</option>
+                <option>Backend</option>
+                <option>Analytics</option>
+                <option>AI</option>
+                <option>Security</option>
+              </select>
+            </label>
+            <label class="full">
+              Short description
+              <textarea name="description" required rows="4" placeholder="What problem does this baseline help someone solve?"></textarea>
+            </label>
+            <button class="primary-button" type="submit"><i data-lucide="upload"></i> Publish baseline</button>
+          </form>
+        </section>
+
+        <section class="view" id="accountView" aria-labelledby="accountTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Profile</p>
+              <h2 id="accountTitle">Your Account</h2>
+            </div>
+          </div>
+          <div class="account-panel" id="accountPanel"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="authDialog">
+      <form method="dialog" class="dialog-card" id="authForm">
+        <button class="icon-button dialog-close" value="cancel" aria-label="Close"><i data-lucide="x"></i></button>
+        <h2>Log in to Baseline Share</h2>
+        <p>Your account, credits, favorites, uploads, and download history are saved in the local database.</p>
+        <label>
+          Display name
+          <input name="name" required placeholder="Kevin Kim" />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" required placeholder="you@example.com" />
+        </label>
+        <button class="primary-button" type="submit">Continue</button>
+      </form>
+    </dialog>
+
+    <dialog id="adDialog">
+      <div class="dialog-card ad-card">
+        <button class="icon-button dialog-close" id="closeAdButton" aria-label="Close"><i data-lucide="x"></i></button>
+        <p class="eyebrow">Sponsor view</p>
+        <h2 id="adTitle">Unlock download</h2>
+        <div class="ad-visual">
+          <span>Baseline Cloud</span>
+          <strong>Deploy starter projects in minutes.</strong>
+        </div>
+        <p id="adCopy">Watch this short sponsor placement to support creators and unlock your download.</p>
+        <button class="primary-button" id="finishAdButton" disabled>Continue in <span id="adCountdown">5</span>s</button>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
