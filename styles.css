@@ -581,6 +581,70 @@ dialog::backdrop {
   opacity: 1;
 }
 
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 32px 0 12px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.site-footer a,
+.policy-document a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.site-footer a:hover,
+.policy-document a:hover {
+  text-decoration: underline;
+}
+
+.policy-page {
+  min-height: 100vh;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 34px 22px 64px;
+}
+
+.policy-brand {
+  width: fit-content;
+  margin-bottom: 28px;
+  text-decoration: none;
+}
+
+.policy-document {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: clamp(24px, 4vw, 46px);
+}
+
+.policy-document h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.02;
+}
+
+.policy-document h2 {
+  margin: 30px 0 10px;
+  font-size: 1.18rem;
+}
+
+.policy-document p {
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 0 0 16px;
+}
+
+.policy-date {
+  font-weight: 750;
+  color: var(--text) !important;
+}
+
 svg {
   width: 18px;
   height: 18px;
@@ -646,4 +710,3 @@ svg {
     padding: 18px;
   }
 }
-
