@@ -46,6 +46,15 @@ Prepared deployment files:
 - `Procfile`
 - `requirements.txt`
 
+Local Git status:
+
+- Git repo initialized in `C:\Users\blank\OneDrive\Desktop\Codex\baseline-share`
+- Initial commit created:
+
+```text
+d3c8cb1 Initial Baseline Share backend prototype
+```
+
 Recommended Stage 1 targets:
 
 - Render free web service, likely `https://baseline-share.onrender.com`
@@ -58,6 +67,19 @@ Important domain clarification:
 - It is a nested subdomain under `share.com`.
 - Use a platform URL for Stage 1.
 - Later buy something like `baselineshare.com`, `baseline-share.com`, `baselineshare.dev`, `sharebaseline.com`, or `getbaseline.dev`.
+
+Current blocker:
+
+- GitHub account is connected as `walkerprocess`.
+- The available GitHub connector can inspect and edit existing repos, but does not expose a create-new-repository tool.
+- Browser automation hit a trust/native-pipe issue when opening GitHub.
+- User needs to manually create a GitHub repo named `baseline-share`, then Codex can add the remote and push:
+
+```powershell
+git remote add origin https://github.com/walkerprocess/baseline-share.git
+git branch -M main
+git push -u origin main
+```
 
 ## Important Files
 
