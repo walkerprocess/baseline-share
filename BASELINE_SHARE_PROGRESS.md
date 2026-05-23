@@ -273,4 +273,5 @@ Current status:
 - `01-encrypted-chatroom` is packaged as `assets/project-zips/encrypted-chatroom.zip`
 - `02` is packaged as `assets/project-zips/live-logistics-news-analytics.zip`
 - `03-jobfit-resume-intelligence` is packaged as `assets/project-zips/jobfit-resume-intelligence.zip`
+- `stock_api` is packaged as `assets/project-zips/stock-signal-engine.zip`
 - These are seeded in the app as resume/portfolio-ready downloadable projects.

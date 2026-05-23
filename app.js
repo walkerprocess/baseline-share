@@ -1,4 +1,4 @@
-const categories = ["All", "Career", "Security", "Analytics", "Frontend", "Backend", "AI", "Product"];
+const categories = ["All", "Career", "Finance", "Security", "Analytics", "Frontend", "Backend", "AI", "Product"];
 const themeKey = "baseline-share-theme";
 
 const defaultState = {

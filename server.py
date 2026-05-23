@@ -28,6 +28,7 @@ SEED_PROJECTS = [
     ("codex-encrypted-chatroom", "Encrypted Chatroom Portfolio Baseline", "Security", ["Node", "WebSocket", "Web Crypto", "HTTPS"], 0, "#ea580c", "encrypted-chatroom.zip", "Resume-ready secure chatroom project with encrypted browser messages, WebSocket relay, private rooms, and security notes."),
     ("codex-logistics-news-analytics", "Live Logistics News Analytics", "Analytics", ["Python", "RSS News", "SQL", "Reports"], 0, "#0f766e", "live-logistics-news-analytics.zip", "Analytics portfolio baseline that turns live logistics news and shipment sample data into KPI and risk reports."),
     ("codex-jobfit-resume-intelligence", "JobFit Resume Intelligence", "Career", ["Python", "Jobs API", "News RSS", "Scoring"], 0, "#7c3aed", "jobfit-resume-intelligence.zip", "Career-tech baseline for students: score live jobs against a resume profile and generate a portfolio-ready job-fit report."),
+    ("codex-stock-signal-engine", "Stock Signal Engine", "Finance", ["Python", "Yahoo Finance", "News RSS", "Excel"], 0, "#2563eb", "stock-signal-engine.zip", "Explainable stock screening project that ranks hot tickers with price momentum, news buzz, risk scoring, portfolio input, and Excel reporting."),
 ]
 
 DEPRECATED_PROJECT_IDS = ["secure-chatroom"]
